@@ -1,0 +1,19 @@
+version: '3'
+services:
+  desktop:
+    image: ubuntu-desktop:0.0.1
+    build: .
+    container_name: ubuntu-desktop
+    restart: always
+    privileged: true
+    environment:
+      - PASSWORD=123456
+    ports:
+      - "8000:22"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
