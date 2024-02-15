@@ -1,19 +1,27 @@
 version: '3'
 services:
   desktop:
-    image: ubuntu-desktop:0.0.1
-    build: .
-    container_name: ubuntu-desktop
+    image: dockerenv:latest
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PASSWORD=000000
+    container_name: dockerenv
     restart: always
     privileged: true
-    environment:
-      - PASSWORD=123456
+    # environment:
+    #   - PASSWORD=123456
     ports:
       - "8000:22"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+      # - "7890:7890"
+      # - "9090:9090"
+      - "5901:5901"
+      - "6081:6081"
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
