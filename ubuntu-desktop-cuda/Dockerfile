@@ -1,6 +1,7 @@
 # Basic image
-FROM ubuntu:22.04
-# FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
+ARG BASIC_IMAGE
+# FROM ${BASIC_IMAGE:-nvidia/cuda:11.8.0-devel-ubuntu22.04}
+FROM ${BASIC_IMAGE:-ubuntu:22.04}
 # Author info
 LABEL maintainer="TaoChenyue"
 LABEL maintainer-email="chenyue.Tao@qq.com"
@@ -63,17 +64,21 @@ RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygi
     && install lazygit /usr/local/bin
 # LunarVim
 RUN LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
-# Xfce4 and vnc 
-RUN apt install -y xfce4 xfce4-goodies tightvncserver \
-    && git clone https://github.com/novnc/noVNC.git ~/noVNC \
-    && chmod +x ~/noVNC/utils/novnc_proxy \
+# Tightvncserver
+RUN apt install -y tightvncserver \
     && mkdir -p ~/.vnc \
-    && echo $PASSWORD | vncpasswd -f > ~/.vnc/passwd 
-EXPOSE 22 5901 6081
+    && echo $PASSWORD | vncpasswd -f > ~/.vnc/passwd \
+    && chmod 600 ~/.vnc/passwd 
+# NoVNC
+RUN git clone https://github.com/novnc/noVNC.git ~/noVNC \
+    && chmod +x ~/noVNC/utils/novnc_proxy 
+# Xfce4
+RUN apt install -y xfce4 xfce4-goodies xfce4-terminal
 ENTRYPOINT ["bash","-c","\
     /usr/sbin/sshd -D \
     && vncserver -geometry 1920x1080 :1 \
     && ~/noVNC/utils/novnc_proxy --vnc localhost:5901 --listen localhost:6081 \
     && startxfce4 \
     "]
+EXPOSE 22 5901 6081
 CMD [ "/bin/bash" ]

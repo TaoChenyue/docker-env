@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  dedicated-server:
+    image: kagurazakanyaa/palworld:latest
+    container_name: palworld
+    # build: # only use in test
+    #   context: .
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - 8999:8211/udp
+      # - 25575:25575/tcp # only use in RCON_ENABLED=true
+    environment:
+      - GAME_PORT=8211
+      - MAX_PLAYERS=32
+      - ENABLE_MULTITHREAD=true
+      - IS_PUBLIC=true
+      - PUBLIC_IP=${PUBLIC_IP}
+      - PUBLIC_PORT=${PUBLIC_PORT}
+      - FORCE_UPDATE=true
+      - SERVER_NAME=${SERVER_NAME}
+      - SERVER_DESC=${SERVER_DESC}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - SERVER_PASSWORD=${SERVER_PASSWORD}
+      - RCON_ENABLED=false
+      - RCON_PORT=25575
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./data:/opt/palworld/Pal/Saved
+      - ./mods:/opt/palworld/Pal/Content/Paks/MOD

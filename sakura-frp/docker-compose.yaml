@@ -1,0 +1,7 @@
+version: "3"
+services:
+  sakura-frp:
+    image: natfrp/launcher
+    container_name: sakura-frp
+    restart: on-failure:5
+    network_mode: "host"
